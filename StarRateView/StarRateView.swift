@@ -34,6 +34,9 @@ public class StarRateView: UIView {
     /// 上次评分
     lazy var lastScore:CGFloat = -1
     
+    /// 最少星星
+    lazy var leastStar:CGFloat = 0
+    
     /// 星星总数量,default is 5
     lazy var totalStarCount:CGFloat = 5
     
@@ -93,11 +96,13 @@ public class StarRateView: UIView {
 // MARK: - CustomMethod
 public extension StarRateView{
     
-    func show(type:StarType = .default, isPanEnable:Bool = true, completion:@escaping (_ score:CGFloat)->()) {
+    func show(type:StarType = .default, isPanEnable:Bool = true, leastStar:CGFloat = 0, completion:@escaping (_ score:CGFloat)->()) {
         
         self.starType = type
         
         self.isPanEnable = isPanEnable
+        
+        self.leastStar = leastStar
         
         self.scoreBlock = completion
         
@@ -149,6 +154,12 @@ extension StarRateView{
             
             var count = self.currentStarCount
             
+            if count < self.leastStar {
+                
+                count = self.leastStar
+                
+            }
+            
             let spaceCount = ceil(count)
             
             let boundsW = self.bounds.width - (self.totalStarCount - 1) * self.starSpace
@@ -184,7 +195,7 @@ extension StarRateView{
             if starW < 0 {
                 starW = 0
             }
-  
+            
             self.starView.frame = CGRect(x: 0, y: 0, width: starW, height: boundsH)
         })
     }
@@ -195,7 +206,7 @@ extension StarRateView{
 
 
 // MARK: - 手势交互
-public extension StarRateView{
+extension StarRateView{
     
     /// 滑动评分
     @objc func startPan(_ pan:UIPanGestureRecognizer) {
